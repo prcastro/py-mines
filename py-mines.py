@@ -20,6 +20,9 @@
 import pygame
 import random
 
+# Constants
+MINE = -1
+
 class MineBoard():
 	def __init__(self, rows, cols, numMines):
 		# Create matrix that indicates hidden spots on the board
@@ -60,15 +63,36 @@ class MineBoard():
 		for i in range(numMines):
 			x = minesRows[i]
 			y = minesCols[i]
-			self.mines[x][y] = -1
+			self.mines[x][y] = MINE
+
+		# Generate the numbers on the board, given the mines
+		for x in range(rows):
+			for y in range(cols):
+				if not self.isMine(x, y):
+					self.mines[x][y] = self.surroundingMines(x, y)
 
 		print(self.mines)
 
 	def isHidden(self, x, y):
-		pass
+		return self.hidden[x][y]
 
 	def isMine (self, x, y):
-		pass
+		if self.mines[x][y] == MINE:
+			return True
+		return False
+
+	def surroundingMines(self, x, y):
+	# This function considers that point (x,y) isn't a mine
+
+	# Count the surround mines
+	count = 0
+	for i in range(-1, 2):
+		for j in range(-1, 2):
+			if self.isMine(x + i, y + j):
+				count += 1
+
+	# Return the amount of mines surrounding that point
+	return count
 
 	def drawBoard(self):
 		pass
@@ -79,8 +103,6 @@ class MineBoard():
 				if self.hidden[x][y]:
 					return False
 		return True
-
-
 
 def main():
 	board = MineBoard(4,5,4)
